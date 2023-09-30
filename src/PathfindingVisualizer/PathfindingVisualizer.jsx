@@ -28,6 +28,43 @@ export default class PathfindingVisualizer extends Component {
     this.setState({ mouseIsPressed: false });
   }
 
+  animateDjikstra(visitedNodesInOrder, nodesInShortedPathOrder) {
+    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+      if (i === visitedNodesInOrder.length) {
+        setTimeout(() => {
+          this.animateShortestPath(nodesInShortedPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        document.getElementById(
+          `node-${node.row}-${node.col}`
+        ).className = `node node-visited`;
+      }, 10 * i);
+    }
+  }
+
+  animateShortestPath(nodesInShortedPathOrder) {
+    for (let i = 0; i < nodesInShortedPathOrder; i++) {
+      setTimeout(() => {
+        const node = nodesInShortedPathOrder[i];
+        document.getElementById(
+          `node-${node.row}-${node.col}`
+        ).className = `node node-shortest-path`;
+      }, 50 * i);
+    }
+  }
+
+  visualizeDjikstra() {
+    const { grid } = this.state;
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const visitedInOrder = djikstra(grid, startNode, finishNode);
+    const nodesInShortedPathOrder = getNodesInShortedPathOrder(finishNode);
+    this.animateDjikstra(visitedInOrder, nodesInShortedPathOrder);
+  }
+
   render() {
     return <div>PathfindingVisualizer</div>;
   }
